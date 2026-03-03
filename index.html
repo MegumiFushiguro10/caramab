@@ -1,114 +1,29 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Consulta CEP - Ten Shadows</title>
+    <title>Buscador de CNPJ - ReceitaWS</title>
     <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-    <div class="shadow-domain">
-        <!-- Roda do Mahoraga ao fundo -->
-        <div class="mahoraga-wheel"></div>
 
-        <div class="card-shikigami">
-            <div class="hand-sign">🐺</div>
-
-            <div class="card-header">
-                <h2>Rastreio de Sombras</h2>
-                <p>— Consulta ViaCEP —</p>
-            </div>
-
-            <!-- Input do CEP -->
-            <div class="invocation-group">
-                <input type="text" id="cep" class="input-cep" placeholder="Digite o CEP (apenas números)" maxlength="9">
-                <button class="btn-invoke" onclick="buscarCEP()">Invocar</button>
-            </div>
-
-            <!-- Div onde o JS vai injetar os resultados -->
-            <div id="resultado">
-                <!-- O conteúdo aparecerá aqui após a busca -->
-            </div>
+    <div class="card">
+        <h1>Buscador de Empresa</h1>
+        
+        <!-- Campo de busca e botão -->
+        <div class="search-box">
+            <input type="text" id="cnpjInput" placeholder="Digite o CNPJ (com ou sem pontuação)" maxlength="18">
+            <button id="btnBuscar">Buscar</button>
         </div>
+        
+        <!-- Div que exibe a mensagem de carregamento (escondida por padrão) -->
+        <div id="loading" style="display: none;">Buscando dados na ReceitaWS...</div>
+        
+        <!-- Div que receberá os dados formatados do JS -->
+        <div id="resultado" style="display: none;"></div>
     </div>
 
-    <script>
-        function buscarCEP() {
-            // Remove traços para evitar erro na API
-            const cep = document.getElementById('cep').value.replace(/\D/g, '');
-            const resultadoDiv = document.getElementById('resultado');
-
-            if (cep.length !== 8) {
-                resultadoDiv.innerHTML = '<p style="color: #ff003c; text-align: center;">Formato de CEP inválido. Use 8 dígitos.</p>';
-                return;
-            }
-
-            // Exibe mensagem de carregamento mística
-            resultadoDiv.innerHTML = '<p style="color: var(--cursed-green); text-align: center;">Canalizando energia...</p>';
-
-            // Construir a URL da API ViaCEP
-            const url = `https://viacep.com.br/ws/${cep}/json/`;
-
-            // Fazer a requisição usando fetch
-            fetch(url)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`Erro na requisição: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.erro) {
-                        resultadoDiv.innerHTML = '<p style="color: #ff003c; text-align: center;">Sombra não encontrada (CEP inexistente).</p>';
-                    } else {
-                        // Injeta os dados na estrutura do tema das Sombras
-                        resultadoDiv.innerHTML = `
-                            <div class="shadow-data">
-                                <div class="data-item">
-                                    <span class="data-label">País / Região</span>
-                                    <span class="data-value">Brasil • ${data.regiao || 'N/A'}</span>
-                                </div>
-                                
-                                <div class="data-item">
-                                    <span class="data-label">Estado</span>
-                                    <span class="data-value">${data.estado || data.uf} (${data.uf})</span>
-                                </div>
-
-                                <div class="data-item" style="grid-column: span 2;">
-                                    <span class="data-label">Localização</span>
-                                    <span class="data-value">${data.localidade} - ${data.bairro || 'Centro'}</span>
-                                </div>
-
-                                <div class="data-item" style="grid-column: span 2;">
-                                    <span class="data-label">Logradouro</span>
-                                    <span class="data-value" style="font-size: 1rem;">${data.logradouro || 'N/A'}</span>
-                                </div>
-
-                                <div class="data-item item-ddd">
-                                    <div>
-                                        <span class="data-label">Código de Área (DDD)</span>
-                                        <span style="font-size: 0.7rem; color: #888;">Sinal rastreado</span>
-                                    </div>
-                                    <span class="data-value">${data.ddd}</span>
-                                </div>
-                            </div>
-                        `;
-                    }
-                })
-                .catch(error => {
-                    resultadoDiv.innerHTML = `<p style="color: #ff003c; text-align: center;">Erro na invocação: ${error.message}</p>`;
-                });
-        }
-
-        // Permite buscar apertando "Enter"
-        document.getElementById('cep').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                buscarCEP();
-            }
-        });
-    </script>
+    <script src="script.js"></script>
 </body>
-
 </html>
